@@ -6,6 +6,7 @@
   <title>CISA TERMINATOR</title>
   <link rel="stylesheet" href="style.css"/>
 </head>
+
 <body>
 
 <div class="app">
@@ -15,7 +16,7 @@
     <h1>CISA TERMINATOR</h1>
   </header>
 
-  <!-- TOP BAR -->
+  <!-- TOPBAR -->
   <nav class="topbar">
     <button>Tanulás</button>
     <button>Tesztelés</button>
@@ -24,18 +25,18 @@
     <button>MENTÉS</button>
   </nav>
 
-  <!-- LAYOUT -->
+  <!-- MAIN LAYOUT -->
   <main class="layout">
 
-    <!-- LEFT -->
+    <!-- LEFT PANEL -->
     <aside class="left-panel">
 
-      <h2>Tanuló PDF</h2>
+      <h2>Tanuló PDF (Google Drive ID)</h2>
 
       <input
         id="pdfInput"
         class="input"
-        placeholder="Google Drive File ID"
+        placeholder="pl. 1C5LqfSLHD2NIqhTVjb7GkMZzScMoYKc2"
       />
 
       <h2 style="margin-top:20px;">Progress</h2>
@@ -48,12 +49,18 @@
 
     </aside>
 
-    <!-- CENTER -->
+    <!-- CENTER VIEWER -->
     <section class="center-panel">
+
       <iframe id="pdfViewer"></iframe>
+
+      <div id="fallback" class="fallback hidden">
+        <button id="openTab">PDF megnyitása új fülön</button>
+      </div>
+
     </section>
 
-    <!-- RIGHT -->
+    <!-- RIGHT PANEL -->
     <aside class="right-panel">
 
       <h2>Tanulási eszközök</h2>
@@ -70,25 +77,45 @@
 
   </main>
 
-  <!-- STATUS -->
+  <!-- STATUS BAR -->
   <footer class="statusbar">
-    Aktív forrás / oldal / progress állapot
+    Aktív forrás / Progress állapot
   </footer>
 
 </div>
 
-<!-- JS -->
+<!-- SCRIPT -->
 <script>
   function toDriveUrl(id) {
     return `https://drive.google.com/file/d/${id}/preview`;
   }
+
+  const iframe = document.getElementById("pdfViewer");
+  const fallback = document.getElementById("fallback");
+  const openTabBtn = document.getElementById("openTab");
+
+  let lastUrl = "";
 
   // PDF LOAD
   document.getElementById("pdfInput").addEventListener("change", (e) => {
     const id = e.target.value.trim();
     if (!id) return;
 
-    document.getElementById("pdfViewer").src = toDriveUrl(id);
+    lastUrl = toDriveUrl(id);
+
+    iframe.src = lastUrl;
+
+    // fallback aktiválás (Drive-safe viselkedés)
+    setTimeout(() => {
+      fallback.classList.remove("hidden");
+    }, 1500);
+  });
+
+  // OPEN IN NEW TAB
+  openTabBtn.addEventListener("click", () => {
+    if (lastUrl) {
+      window.open(lastUrl, "_blank");
+    }
   });
 
   // PROGRESS LOAD
