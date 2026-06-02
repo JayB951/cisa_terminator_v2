@@ -2,46 +2,60 @@
 <html lang="hu">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CISA TERMINATOR</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
 <div class="app">
 
+  <!-- HEADER -->
   <header class="header">
     <h1>CISA TERMINATOR</h1>
   </header>
 
+  <!-- TOP BAR -->
   <nav class="topbar">
     <button>Tanulás</button>
     <button>Tesztelés</button>
     <button>Statisztika</button>
-
     <div class="spacer"></div>
-
     <button>MENTÉS</button>
   </nav>
 
+  <!-- LAYOUT -->
   <main class="layout">
 
+    <!-- LEFT -->
     <aside class="left-panel">
-      <h2>Források</h2>
 
-      <ul>
-        <li>Review</li>
-        <li>QBank</li>
-        <li>Progress</li>
-      </ul>
+      <h2>Tanuló PDF</h2>
+
+      <input
+        id="pdfInput"
+        class="input"
+        placeholder="Google Drive File ID"
+      />
+
+      <h2 style="margin-top:20px;">Progress</h2>
+
+      <input
+        type="file"
+        id="progressFile"
+        accept=".json,.txt"
+      />
+
     </aside>
 
+    <!-- CENTER -->
     <section class="center-panel">
-      <h2>PDF Viewer</h2>
-      <p>Iteráció 2-ben kerül integrálásra.</p>
+      <iframe id="pdfViewer"></iframe>
     </section>
 
+    <!-- RIGHT -->
     <aside class="right-panel">
+
       <h2>Tanulási eszközök</h2>
 
       <ul>
@@ -51,15 +65,46 @@
         <li>Mind Map</li>
         <li>Flash Cards</li>
       </ul>
+
     </aside>
 
   </main>
 
+  <!-- STATUS -->
   <footer class="statusbar">
-    Aktív forrás / Domain / Oldal
+    Aktív forrás / oldal / progress állapot
   </footer>
 
 </div>
+
+<!-- JS -->
+<script>
+  function toDriveUrl(id) {
+    return `https://drive.google.com/file/d/${id}/preview`;
+  }
+
+  // PDF LOAD
+  document.getElementById("pdfInput").addEventListener("change", (e) => {
+    const id = e.target.value.trim();
+    if (!id) return;
+
+    document.getElementById("pdfViewer").src = toDriveUrl(id);
+  });
+
+  // PROGRESS LOAD
+  document.getElementById("progressFile").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = (evt) => {
+      console.log("Progress loaded:", evt.target.result);
+    };
+
+    reader.readAsText(file);
+  });
+</script>
 
 </body>
 </html>
